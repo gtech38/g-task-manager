@@ -5,6 +5,8 @@ import {
   addDoc,
   Timestamp,
   orderBy,
+  query,
+  limit,
 } from "firebase/firestore";
 
 // Helper function to format the firebase timestamp DueDate to a Javascript Date yyyy-MM-dd
@@ -23,7 +25,11 @@ export default async (req, res) => {
       // console.log("Fetching tasks from Firestore");
       // Fetch tasks from Firestore using modular SDK
       const tasksCollection = collection(firestore, "tasks");
-      const first = query(taskCollection, orderBy("population"), limit(5));
+      const first = query(
+        collection(firestore, "tasks"),
+        orderBy("DueDate"),
+        limit(25)
+      );
       // const snapshot = await getDocs(tasksCollection);
       const snapshot = await getDocs(first);
 
