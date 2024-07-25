@@ -1,0 +1,66 @@
+@startuml
+title Task Management System - High-Level Architecture
+
+actor User
+
+RECTANGLE "Pages" {
+    RECTANGLE "TaskList" as TaskListPage
+    RECTANGLE "TaskForm" as TaskFormPage
+    RECTANGLE "Login" as LoginPage
+    RECTANGLE "Register" as RegisterPage
+}
+
+RECTANGLE "Components" {
+    COMPONENT "TaskList" as TaskListComponent
+    COMPONENT "TaskForm" as TaskFormComponent
+}
+
+RECTANGLE "API Routes" {
+    COMPONENT "/api/auth/login" as LoginAPI
+    COMPONENT "/api/auth/register" as RegisterAPI
+    COMPONENT "/api/tasks" as TasksAPI
+}
+
+RECTANGLE "Redux Store" {
+    COMPONENT "actions/authActions.js" as AuthActions
+    COMPONENT "actions/taskActions.js" as TaskActions
+    COMPONENT "reducers/authReducer.js" as AuthReducer
+    COMPONENT "reducers/taskReducer.js" as TaskReducer
+    COMPONENT "store/store.js" as Store
+}
+
+DATABASE "Firebase" as FirebaseDB {
+    COMPONENT "Firestore" as FirestoreDB
+    COMPONENT "Authentication" as AuthDB
+}
+
+User --> LoginPage : "Navigates to"
+User --> RegisterPage : "Navigates to"
+User --> TaskListPage : "Navigates to"
+User --> TaskFormPage : "Navigates to (through TaskList)"
+
+LoginPage --> AuthActions : "Dispatches login action"
+RegisterPage --> AuthActions : "Dispatches register action"
+
+AuthActions --> LoginAPI : "Calls"
+AuthActions --> RegisterAPI : "Calls"
+
+LoginAPI --> AuthDB : "Authenticates with"
+RegisterAPI --> AuthDB : "Registers with"
+
+TaskListPage --> TaskListComponent : "Contains"
+TaskListComponent --> TaskActions : "Dispatches fetchTasks action"
+TaskActions --> TasksAPI : "Calls"
+
+TasksAPI --> FirestoreDB : "Interacts with"
+
+TaskListComponent --> TaskFormComponent : "Opens on double-click"
+
+TaskFormPage --> TaskFormComponent : "Contains"
+
+TaskFormComponent --> TaskActions : "Dispatches task-related actions"
+TaskActions --> TasksAPI : "Calls"
+
+Store --> AuthReducer : "Includes"
+Store --> TaskReducer : "Includes"
+@enduml
