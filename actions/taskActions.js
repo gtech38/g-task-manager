@@ -36,6 +36,7 @@ export const addTask = (task) => async (dispatch, getState) => {
 export const updateTask = (id, task) => async (dispatch, getState) => {
   try {
     const user = getState().auth.user; // Get user from state
+    console.log("Updating task for user:", user.uid, "Task ID:", id);
     await axios.put(`/api/tasks/${id}?userId=${user.uid}`, task);
     dispatch({ type: "UPDATE_TASK", payload: { TaskID: id, ...task } });
   } catch (error) {

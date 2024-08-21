@@ -8,13 +8,13 @@ import {
 } from "firebase/firestore";
 
 export default async (req, res) => {
-  const { id } = req.query;
+  const { id, userId } = req.query; // Extract userId from query parameters
 
+  // Get a Task by ID
   if (req.method === "GET") {
     try {
       const doc = await collection("tasks").doc(id).get();
-      //TODO: Tasks should be documents in a subcollection of a document of the User
-      // collection(firestore, "taskManager", <userID>, "tasks")
+
       if (!doc.exists) {
         res.status(404).json({ error: "Task not found" });
         return;
@@ -31,29 +31,26 @@ export default async (req, res) => {
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch task" });
     }
-  } else if (req.method === "PUT") {
+  }
+  // Update a task by ID
+  else if (req.method === "PUT") {
     try {
       const { TaskTitle, TaskNotes, Category, Priority, DueDate, isCompleted } =
         req.body;
-      //TODO: Tasks should be documents in a subcollection of a document of the User
-      // collection(firestore, "taskManager", <userID>, "tasks")
-      const taskRef = doc(firestore, "tasks", id);
+
+      if (!userId || !id) {
+        res.status(400).json({ error: "Missing userId or task ID" });
+        return;
+      }
+
+      //Tasks should be documents in a subcollection of a document of the User
+      const taskRef = doc(firestore, "TaskManager", userId, "Tasks", id);
 
       // Convert DueDate to a Firestore Timestamp
       const dueDate = new Date(DueDate);
       const dueDateTimestamp = Timestamp.fromDate(dueDate);
 
       await updateDoc(taskRef, {
-        TaskTitle,
-        TaskNotes,
-        Category,
-        Priority,
-        DueDate: dueDateTimestamp,
-        isCompleted,
-      });
-
-      // Log the received data
-      console.log("Received data for update:", {
         TaskTitle,
         TaskNotes,
         Category,
@@ -74,11 +71,13 @@ export default async (req, res) => {
     } catch (error) {
       res.status(500).json({ error: "Failed to update task" });
     }
-  } else if (req.method === "DELETE") {
+  }
+  // Delete a task by ID
+  else if (req.method === "DELETE") {
     try {
-      //TODO: Tasks should be documents in a subcollection of a document of the User
-      // collection(firestore, "taskManager", <userID>, "tasks")
-      await deleteDoc(doc(firestore, "tasks", id));
+      const taskRef = doc(firestore, "TaskManager", userId, "Tasks", id);
+
+      await deleteDoc(taskRef);
       res.status(200).json({ success: true });
     } catch (error) {
       res.status(500).json({ error: "Failed to delete task" });
