@@ -1,12 +1,15 @@
+// File: _app.js
 import { Provider } from "react-redux";
 import store from "../store/store";
+import { UserProvider } from "../context/UserContext";
 import "../styles/globals.css";
 
-// Custom App component to wrap the app with the Redux Provider
 function MyApp({ Component, pageProps }) {
   return (
     <Provider store={store}>
-      <Component {...pageProps} />
+      <UserProvider>
+        <Component {...pageProps} />
+      </UserProvider>
     </Provider>
   );
 }

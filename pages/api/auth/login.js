@@ -1,10 +1,11 @@
-import { auth } from "../../../firebase";
+import { auth, firestore } from "../../../firebase";
 import {
   signInWithEmailAndPassword,
   setPersistence,
   browserSessionPersistence,
   browserLocalPersistence,
 } from "firebase/auth";
+import { doc, getDoc, setDoc, addDoc } from "firebase/firestore";
 
 // API route for handling user login
 export default async (req, res) => {
@@ -20,7 +21,20 @@ export default async (req, res) => {
         email,
         password
       );
+
       const user = userCredential.user;
+
+      // // Check if the user document exists
+      const userDocRef = doc(firestore, "TaskManager", user.uid);
+      const userDoc = await getDoc(userDocRef);
+
+      if (!userDoc.exists()) {
+        // If user document does not exist, create it
+        await setDoc(userDocRef, {
+          UserID: user.uid,
+          Username: user.email.split("@")[0], // Default username
+        });
+      }
 
       // Send back user data
       res.status(200).json({ user });

@@ -13,6 +13,8 @@ export default async (req, res) => {
   if (req.method === "GET") {
     try {
       const doc = await collection("tasks").doc(id).get();
+      //TODO: Tasks should be documents in a subcollection of a document of the User
+      // collection(firestore, "taskManager", <userID>, "tasks")
       if (!doc.exists) {
         res.status(404).json({ error: "Task not found" });
         return;
@@ -33,8 +35,10 @@ export default async (req, res) => {
     try {
       const { TaskTitle, TaskNotes, Category, Priority, DueDate, isCompleted } =
         req.body;
-
+      //TODO: Tasks should be documents in a subcollection of a document of the User
+      // collection(firestore, "taskManager", <userID>, "tasks")
       const taskRef = doc(firestore, "tasks", id);
+
       // Convert DueDate to a Firestore Timestamp
       const dueDate = new Date(DueDate);
       const dueDateTimestamp = Timestamp.fromDate(dueDate);
@@ -72,7 +76,8 @@ export default async (req, res) => {
     }
   } else if (req.method === "DELETE") {
     try {
-      // await firestore.collection("tasks").doc(id).delete();
+      //TODO: Tasks should be documents in a subcollection of a document of the User
+      // collection(firestore, "taskManager", <userID>, "tasks")
       await deleteDoc(doc(firestore, "tasks", id));
       res.status(200).json({ success: true });
     } catch (error) {
