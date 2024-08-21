@@ -9,7 +9,6 @@ export const UserProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(null);
 
   useEffect(() => {
-    console.log("User context updated:", user); // Add this line for debugging
     if (user) {
       setCurrentUser(user);
     } else {

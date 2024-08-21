@@ -5,8 +5,6 @@ export const fetchTasks = () => async (dispatch, getState) => {
   const user = getState().auth.user; // Get user from state
   dispatch({ type: "FETCH_TASKS_REQUEST" });
   try {
-    console.log("user ID in fetch task action" + user.uid);
-    // const response = await axios.get("/api/tasks", { userID: user.uid });
     const response = await axios.get(`/api/tasks?userId=${user.uid}`); // Pass userId as query parameter
     dispatch({ type: "FETCH_TASKS_SUCCESS", payload: response.data });
   } catch (error) {
@@ -18,10 +16,8 @@ export const fetchTasks = () => async (dispatch, getState) => {
 export const addTask = (task) => async (dispatch, getState) => {
   try {
     const user = getState().auth.user; // Get user from state
-    console.log("user in addTask Action: " + user.uid);
-    const response = await axios.post("/api/tasks", {
+    const response = await axios.post(`/api/tasks?userId=${user.uid}`, {
       ...task,
-      userId: user.uid,
     });
     dispatch({
       type: "ADD_TASK",
@@ -36,7 +32,6 @@ export const addTask = (task) => async (dispatch, getState) => {
 export const updateTask = (id, task) => async (dispatch, getState) => {
   try {
     const user = getState().auth.user; // Get user from state
-    console.log("Updating task for user:", user.uid, "Task ID:", id);
     await axios.put(`/api/tasks/${id}?userId=${user.uid}`, task);
     dispatch({ type: "UPDATE_TASK", payload: { TaskID: id, ...task } });
   } catch (error) {

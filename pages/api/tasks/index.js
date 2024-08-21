@@ -20,11 +20,9 @@ const formatDate = (firebaseTimestamp) => {
 };
 
 export default async (req, res) => {
+  const { userId } = req.query; // Retrieve userId from query parameters
   if (req.method === "GET") {
     try {
-      const { userId } = req.query; // Retrieve userId from query parameters
-      console.log("userID in Get request: " + req.body);
-
       if (!userId) {
         res.status(401).json({ error: "Unauthorized" });
         return;
@@ -58,15 +56,13 @@ export default async (req, res) => {
     }
   } else if (req.method === "POST") {
     try {
-      const { userId, TaskTitle, TaskNotes, Category, Priority, DueDate } =
-        req.body;
+      const { TaskTitle, TaskNotes, Category, Priority, DueDate } = req.body;
 
-      // const { TaskTitle, TaskNotes, Category, Priority, DueDate } = req.body;
       if (!userId) {
         res.status(401).json({ error: "Unauthorized" });
         return;
       }
-      console.log("New Task request body: " + req.body);
+
       // Add new task to Firestore using modular SDK
       const docRef = await addDoc(
         collection(firestore, "TaskManager", userId, "Tasks"),
