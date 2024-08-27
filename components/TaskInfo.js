@@ -11,8 +11,6 @@ const TaskInfo = ({
   handleUpdateTask,
   handleDeleteTask,
 }) => {
-  // const dispatch = useDispatch();
-  // console.log("Task Info: " + selectedTask);
   const isNewTask = !selectedTask;
   const [formMode, setFormMode] = useState(isNewTask ? "create" : "read");
   const [task, setTask] = useState(
@@ -57,7 +55,6 @@ const TaskInfo = ({
         // Update an existing task
         const { TaskID, ...taskData } = updatedTask; // Exclude TaskID from the request body
         await handleUpdateTask(selectedTask.TaskID, taskData);
-        // setSelectedTask(TaskID, ...taskData);
       }
     } catch (error) {
       console.error("Failed to save task", error);

@@ -29,7 +29,6 @@ const TaskForm = ({ initialValues, onSubmit, onDelete, mode }) => {
     } else if (mode === "edit" || mode === "read") {
       setFormValues(initialValues);
     }
-    // console.log(mode);
   }, [mode, initialValues]);
 
   // Validation function to check form values
@@ -81,7 +80,6 @@ const TaskForm = ({ initialValues, onSubmit, onDelete, mode }) => {
     setErrors(validationErrors);
 
     if (Object.keys(validationErrors).length === 0) {
-      console.log("TaskForm Form Values: " + formValues);
       onSubmit(formValues);
     }
     setIsSubmitting(false);

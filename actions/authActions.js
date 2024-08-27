@@ -25,6 +25,7 @@ export const register = (email, password) => async (dispatch) => {
       email,
       password,
     });
+
     // Dispatch REGISTER_SUCCESS with the server's user data
     dispatch({ type: "REGISTER_SUCCESS", payload: response.data.user });
   } catch (error) {

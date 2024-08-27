@@ -20,17 +20,19 @@ const formatDate = (firebaseTimestamp) => {
 };
 
 export default async (req, res) => {
+  const { userId } = req.query; // Retrieve userId from query parameters
   if (req.method === "GET") {
     try {
-      // console.log("Fetching tasks from Firestore");
-      // Fetch tasks from Firestore using modular SDK
-      const tasksCollection = collection(firestore, "tasks");
+      if (!userId) {
+        res.status(401).json({ error: "Unauthorized" });
+        return;
+      }
+
       const first = query(
-        collection(firestore, "tasks"),
+        collection(firestore, "TaskManager", userId, "Tasks"),
         orderBy("DueDate"),
         limit(25)
       );
-      // const snapshot = await getDocs(tasksCollection);
       const snapshot = await getDocs(first);
 
       let lastDocument = snapshot.docs[snapshot.docs.length - 1];
@@ -46,7 +48,6 @@ export default async (req, res) => {
         };
       });
 
-      // console.log("Tasks Date Formatted:", tasks);
       res.status(200).json(tasks);
     } catch (error) {
       // Log the error to understand what went wrong
@@ -57,16 +58,23 @@ export default async (req, res) => {
     try {
       const { TaskTitle, TaskNotes, Category, Priority, DueDate } = req.body;
 
-      console.log("New Task request body: " + req.body);
+      if (!userId) {
+        res.status(401).json({ error: "Unauthorized" });
+        return;
+      }
+
       // Add new task to Firestore using modular SDK
-      const docRef = await addDoc(collection(firestore, "tasks"), {
-        TaskTitle,
-        TaskNotes,
-        Category,
-        Priority,
-        DueDate: Timestamp.fromDate(new Date(DueDate)), // Ensure the date is sent as a Firestore Timestamp
-        isCompleted: false,
-      });
+      const docRef = await addDoc(
+        collection(firestore, "TaskManager", userId, "Tasks"),
+        {
+          TaskTitle,
+          TaskNotes,
+          Category,
+          Priority,
+          DueDate: Timestamp.fromDate(new Date(DueDate)), // Ensure the date is sent as a Firestore Timestamp
+          isCompleted: false,
+        }
+      );
       res.status(201).json({ TaskID: docRef.id });
     } catch (error) {
       console.error("Error creating task:", error.message);

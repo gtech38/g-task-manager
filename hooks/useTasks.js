@@ -6,14 +6,22 @@ import {
   updateTask,
   deleteTask,
 } from "../actions/taskActions";
+import { useUser } from "../context/UserContext";
 
 const useTasks = () => {
   const dispatch = useDispatch();
+  const user = useUser();
   const { tasks, loading, error } = useSelector((state) => state.tasks);
 
+  // useEffect(() => {
+  //   dispatch(fetchTasks());
+  // }, [dispatch]);
+
   useEffect(() => {
-    dispatch(fetchTasks());
-  }, [dispatch]);
+    if (user) {
+      dispatch(fetchTasks());
+    }
+  }, [dispatch, user]);
 
   const handleAddTask = useCallback(
     async (task) => {
