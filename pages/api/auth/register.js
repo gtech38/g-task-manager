@@ -1,6 +1,6 @@
-import { auth, firebase } from "../../../firebase";
+import { auth, firestore } from "../../../firebase";
 import { createUserWithEmailAndPassword } from "firebase/auth";
-import { getDoc, setDoc } from "firebase/firestore";
+import { getDoc, setDoc, doc, collection } from "firebase/firestore";
 
 export default async (req, res) => {
   if (req.method === "POST") {
